@@ -8,9 +8,7 @@ function App() {
     <div className="App">
       Use Alt/Option plus Backslash (\) to enter Compose mode.
       <ComposedInput
-        textFieldProps={{
-          label: 'Try this out'
-        }}
+        
       />
     </div>
   );

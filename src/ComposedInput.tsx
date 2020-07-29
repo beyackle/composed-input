@@ -1,10 +1,8 @@
 import React, {useState } from 'react';
-import {TextField, ITextFieldProps} from '@fluentui/react';
 
 import CompositionGrid from './CompositionGrid';
 
 type Props = {
-    textFieldProps: ITextFieldProps
 }
 
 export default function ComposedInput(props: Props) {
@@ -15,8 +13,8 @@ export default function ComposedInput(props: Props) {
       Math.floor(Math.random()*1000000).toString(36)
     );
 
-    const onChangeValue = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-        if (newValue != null) setValue(newValue)
+    const onChangeValue = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if (ev.currentTarget.value != null) setValue(ev.currentTarget.value)
     }
 
     return <div
@@ -37,16 +35,14 @@ export default function ComposedInput(props: Props) {
                 onExit={(char) => {
                     setGridMode(false);
                     setValue(value + char);
-                    console.log(id, document.getElementById(id));
                     setTimeout( ()=>document.getElementById(id)?.focus(), 10);
                 }}
             /> : null
         }
-        <TextField
-            {...props.textFieldProps}
+        <input
             id = {id}
             value={value}
-            onChange={onChangeValue}
+            onInput={onChangeValue}
         />
         </div>;
 
