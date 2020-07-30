@@ -1,6 +1,6 @@
 /** @jsx jsx */
 
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {jsx, css} from '@emotion/core';
 import compTree from './compTree.json';
 
@@ -14,37 +14,41 @@ type CompositionTree = {
 };
 
 const gridStyle = css`
-    display: grid;
-    grid-template-columns: 1fr 3fr 2fr 1fr;
-    grid-auto-rows: auto;
     position: absolute;
     border: 1px solid black;
     background: #cccccc;
-`;
-
-const charPathStyle = css`
-    height: 24px;
     font-size: 16px;
 `;
 
 const outputChar = css`
-    height: 32px;
+    height: 48px;
+    width: 48px;
+
     background: #ffffff;
     font-size: 22px;
     grid-column: -1;
+    border: 1px solid #ff0000;
 `;
 
-const childMap = css`
-    grid-row: 2;
+const rowHeader = css`
+    background: #ffffff;
+    border: 1px solid #444444;
 `;
 
 export default function CompositionGrid(props: Props) {
-    const [char, setChar] = useState<string>('');
+    const [char] = useState<string>('');
     const [sequence, setSequence] = useState<string[]>([]);
     const [tree, setTree] = useState<CompositionTree>(compTree);
     const [parentTree, setParentTree] = useState<CompositionTree>(compTree);
 
-    console.log(char, sequence, tree);
+    const az = <React.Fragment><tr key={'az-low'}>
+            <th css={rowHeader}>a-z</th>
+            <td>Lowercase letters</td>
+        </tr>
+        <tr key={'az-up'}>
+            <th css={rowHeader}>A-Z</th>
+            <td>Uppercase letters</td>
+        </tr></React.Fragment>;    
 
     return <div 
       id={props.id}
@@ -60,7 +64,7 @@ export default function CompositionGrid(props: Props) {
           } else if (ev.key in tree) {
             console.log(ev.key, tree[ev.key]);
             if (typeof tree[ev.key] === 'string') {
-                setChar( tree[ev.key] as string );
+                props.onExit( tree[ev.key] as string );
             } else if (typeof tree[ev.key] === 'object') {
                 setSequence(sequence.concat([ev.key]));
                 setTree( tree[ev.key] as CompositionTree );
@@ -75,22 +79,28 @@ export default function CompositionGrid(props: Props) {
       }
     >
         <div id="characters">
-            {sequence.map((ch) => <span css={charPathStyle}>{ch}</span>)}
             <div css={outputChar}>{char}</div>
         </div>
-        <div id="children" css={childMap}>
+        <table id="children">
             {
                 Object.entries(tree).map(
                     ([key, value]) => {
-                        if (typeof value === 'object' && '$desc' in value)
-                            return <div key={key}>{key}:{value['$desc']}</div>
-                        else if (typeof value === 'object') 
-                            return <div key={key}>{key}</div>
+                        console.log(key, value);
+                        if (key === '$desc') return null;
+                        if (typeof value === 'object' && '$desc' in value) {                   
+                            if (key === value['$desc']) return null;
+                            return <tr key={key}>
+                                <th css={rowHeader}>{key}</th>
+                                <td>{value['$desc']}</td>
+                            </tr>
+                        } else if (typeof value === 'object') 
+                            return <tr key={key}><th css={rowHeader}>{key}</th></tr>
                         else
-                            return <div key={key}>{key}:{value}</div>
+                            return <tr key={key}><th css={rowHeader}>{key}</th><td>{value}</td></tr>
                     }
                 )
             }
-        </div>
+            {sequence.length === 0 ? az : null}
+        </table>
     </div>;
 }
