@@ -58,11 +58,9 @@ export default function CompositionGrid(props: Props) {
           if (ev.key === 'Enter') {
             props.onExit(char)
           } else if (ev.key === 'Backspace' && sequence.length > 0) {
-            console.log('bksp');
             setSequence(sequence.slice(0, sequence.length - 1));
             setTree(parentTree);
           } else if (ev.key in tree) {
-            console.log(ev.key, tree[ev.key]);
             if (typeof tree[ev.key] === 'string') {
                 props.onExit( tree[ev.key] as string );
             } else if (typeof tree[ev.key] === 'object') {
@@ -70,7 +68,6 @@ export default function CompositionGrid(props: Props) {
                 setTree( tree[ev.key] as CompositionTree );
             }
           } else if (ev.key+'+' in tree) {
-                console.log('key');
                 setSequence(sequence.concat([ev.key]));
                 setParentTree(tree);
                 setTree(tree[ev.key+'+'] as CompositionTree);
@@ -85,7 +82,6 @@ export default function CompositionGrid(props: Props) {
             {
                 Object.entries(tree).map(
                     ([key, value]) => {
-                        console.log(key, value);
                         if (key === '$desc') return null;
                         if (typeof value === 'object' && '$desc' in value) {                   
                             if (key === value['$desc']) return null;

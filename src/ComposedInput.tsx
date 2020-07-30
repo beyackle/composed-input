@@ -1,9 +1,10 @@
-import React, {useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 import CompositionGrid from './CompositionGrid';
 
 type Props = {
-}
+    inputProps?: {}
+};
 
 export default function ComposedInput(props: Props) {
 
@@ -12,6 +13,7 @@ export default function ComposedInput(props: Props) {
     const [id] = useState(
       Math.floor(Math.random()*1000000).toString(36)
     );
+    const input = useRef<HTMLInputElement>(null);
 
     const onChangeValue = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if (ev.currentTarget.value != null) setValue(ev.currentTarget.value)
@@ -33,16 +35,26 @@ export default function ComposedInput(props: Props) {
             gridMode ? <CompositionGrid
                 id='compositionGrid'
                 onExit={(char) => {
+                    if (input.current != null) {                    
+                        const array = Array.from(value);
+                        const start = input.current.selectionStart ?? 0;
+                        const end = input.current.selectionEnd ?? 0;
+                        console.log( start, end );
+                        array.splice( start, end-start, char );
+                        setValue(array.join(''));
+                        input.current.setSelectionRange(start, end);
+                    }
                     setGridMode(false);
-                    setValue(value + char);
                     setTimeout( ()=>document.getElementById(id)?.focus(), 10);
                 }}
             /> : null
         }
         <input
+            {...props.inputProps}
             id = {id}
             value={value}
             onInput={onChangeValue}
+            ref={input}
         />
         </div>;
 
