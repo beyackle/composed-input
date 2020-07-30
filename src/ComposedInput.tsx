@@ -42,7 +42,7 @@ export default function ComposedInput(props: Props) {
                         console.log( start, end );
                         array.splice( start, end-start, char );
                         setValue(array.join(''));
-                        input.current.setSelectionRange(start, end);
+                        setTimeout(()=> input.current?.setSelectionRange(start+1, start+1), 10);
                     }
                     setGridMode(false);
                     setTimeout( ()=>document.getElementById(id)?.focus(), 10);
