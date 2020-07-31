@@ -20,23 +20,12 @@ const gridStyle = css`
     font-size: 16px;
 `;
 
-const outputChar = css`
-    height: 48px;
-    width: 48px;
-
-    background: #ffffff;
-    font-size: 22px;
-    grid-column: -1;
-    border: 1px solid #ff0000;
-`;
-
 const rowHeader = css`
     background: #ffffff;
     border: 1px solid #444444;
 `;
 
 export default function CompositionGrid(props: Props) {
-    const [char] = useState<string>('');
     const [sequence, setSequence] = useState<string[]>([]);
     const [tree, setTree] = useState<CompositionTree>(compTree);
     const [parentTree, setParentTree] = useState<CompositionTree>(compTree);
@@ -55,9 +44,7 @@ export default function CompositionGrid(props: Props) {
       css={gridStyle} 
       tabIndex={-1}
       onKeyUp={(ev) => {
-          if (ev.key === 'Enter') {
-            props.onExit(char)
-          } else if (ev.key === 'Backspace' && sequence.length > 0) {
+          if (ev.key === 'Backspace' && sequence.length > 0) {
             setSequence(sequence.slice(0, sequence.length - 1));
             setTree(parentTree);
           } else if (ev.key in tree) {
@@ -75,9 +62,6 @@ export default function CompositionGrid(props: Props) {
           }
       }
     >
-        <div id="characters">
-            <div css={outputChar}>{char}</div>
-        </div>
         <table id="children">
             {
                 Object.entries(tree).map(

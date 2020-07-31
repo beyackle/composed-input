@@ -4,6 +4,7 @@ import CompositionGrid from './CompositionGrid';
 
 type Props = {
     inputProps?: {}
+    key: string
 };
 
 export default function ComposedInput(props: Props) {
@@ -25,7 +26,7 @@ export default function ComposedInput(props: Props) {
                 // if we're using our own IME, ignore this
                 return;
             }
-            if (ev.key === '\\' && ev.altKey) {
+            if (ev.key === props.key && ev.altKey) {
                 setGridMode(true);
                 setTimeout( () => document.getElementById('compositionGrid')?.focus(), 10);
             }
@@ -59,3 +60,7 @@ export default function ComposedInput(props: Props) {
         </div>;
 
 }
+
+ComposedInput.defaultProps = {
+    key: '\\'
+};
